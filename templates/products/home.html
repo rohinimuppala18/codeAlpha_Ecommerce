@@ -1,0 +1,453 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AlphaCart | Premium Keyboards, Monitors & Ergonomic Setup Gear{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<section class="hero-banner d-flex align-items-center mb-5">
+    <div class="container">
+        <div class="row align-items-center py-4">
+            <div class="col-lg-6 mb-4 mb-lg-0 animate-slide">
+                <span class="badge mb-3 px-3 py-2 fw-bold text-uppercase text-white" style="background: linear-gradient(135deg, #06b6d4 0%, #4f46e5 100%) !important;"><i class="fa-solid fa-sparkles me-1 text-warning"></i> Elite Workspace Gear</span>
+                <h1 class="display-3 fw-extrabold mb-3 lh-1">Elevate Your Dev Environment.</h1>
+                <p class="lead text-white-50 mb-4 fs-4">Explore high-quality keyboards, premium monitors, ergonomic chairs, and workspace essentials curated specifically for developer productivity.</p>
+                <div class="d-grid d-md-flex gap-3">
+                    <a href="{% url 'products:shop' %}" class="btn btn-accent btn-lg px-5"><i class="fa-solid fa-bag-shopping me-2"></i> Shop Catalog</a>
+                    <a href="#featured" class="btn btn-outline-light btn-lg px-4">Featured Items</a>
+                </div>
+            </div>
+            
+            <div class="col-lg-5 offset-lg-1 d-none d-lg-block">
+                <!-- Visual Switch Sound Lab & Hot List Container -->
+                <div class="glass-panel p-4 border border-secondary shadow-lg" style="min-height: 380px; background: rgba(15, 23, 42, 0.55);">
+                    <!-- Navigation Tabs -->
+                    <div class="lab-tab-nav mb-3">
+                        <button class="lab-tab-btn active" id="tabDealsBtn" onclick="switchLabTab('deals')">
+                            <i class="fa-solid fa-fire text-warning me-1"></i> Hot Offers
+                        </button>
+                        <button class="lab-tab-btn" id="tabSoundLabBtn" onclick="switchLabTab('sound-lab')">
+                            <i class="fa-solid fa-gamepad text-info me-1"></i> Key Sound Lab
+                        </button>
+                    </div>
+
+                    <!-- Tab Content: Deals (Default) -->
+                    <div id="labContentDeals" class="text-center">
+                        <h4 class="mt-3 text-white mb-2 fw-bold">Developer Essentials</h4>
+                        <p class="text-white-50 small mb-4">Up to 40% off on premium mechanical keyboards, desk mats, and desktop essentials this week.</p>
+                        
+                        <div class="p-3 rounded-3 d-flex justify-content-around align-items-center mb-4" style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <div class="text-center">
+                                <i class="fa-solid fa-keyboard fa-2x text-info mb-2"></i>
+                                <div class="small fw-bold text-white">Keyboards</div>
+                            </div>
+                            <div class="text-center">
+                                <i class="fa-solid fa-desktop fa-2x text-primary mb-2"></i>
+                                <div class="small fw-bold text-white">Displays</div>
+                            </div>
+                            <div class="text-center">
+                                <i class="fa-solid fa-headphones fa-2x text-warning mb-2"></i>
+                                <div class="small fw-bold text-white">Audio</div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <span class="badge rounded-pill bg-danger py-2.5 px-3 text-uppercase fw-bold" style="font-size: 0.8rem; letter-spacing: 0.05em;">PROMO CODE: ALPHADEV</span>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Sound Lab -->
+                    <div id="labContentSoundLab" class="d-none">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-white-50">Click keys or type on your keyboard:</span>
+                            <div class="d-flex gap-1" id="switchSelector">
+                                <div class="switch-option active" data-switch="blue" style="--accent-color: #0ea5e9;" onclick="selectSwitch('blue')">
+                                    <span class="switch-color-dot" style="background: #0ea5e9;"></span>Blue
+                                </div>
+                                <div class="switch-option" data-switch="brown" style="--accent-color: #a855f7;" onclick="selectSwitch('brown')">
+                                    <span class="switch-color-dot" style="background: #a855f7;"></span>Brown
+                                </div>
+                                <div class="switch-option" data-switch="red" style="--accent-color: #ef4444;" onclick="selectSwitch('red')">
+                                    <span class="switch-color-dot" style="background: #ef4444;"></span>Red
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Virtual Mini Keyboard Layout -->
+                        <div class="keyboard-grid">
+                            <!-- Row 1 -->
+                            <div class="key" data-key="ESC" onclick="pressVirtualKey('Esc')">Esc</div>
+                            <div class="key" data-key="Q" onclick="pressVirtualKey('Q')">Q</div>
+                            <div class="key" data-key="W" onclick="pressVirtualKey('W')">W</div>
+                            <div class="key" data-key="E" onclick="pressVirtualKey('E')">E</div>
+                            <div class="key" data-key="R" onclick="pressVirtualKey('R')">R</div>
+                            <div class="key" data-key="T" onclick="pressVirtualKey('T')">T</div>
+                            <div class="key" data-key="Y" onclick="pressVirtualKey('Y')">Y</div>
+                            <div class="key" data-key="U" onclick="pressVirtualKey('U')">U</div>
+                            <div class="key" data-key="I" onclick="pressVirtualKey('I')">I</div>
+                            <div class="key" data-key="O" onclick="pressVirtualKey('O')">O</div>
+                            <div class="key" data-key="P" onclick="pressVirtualKey('P')">P</div>
+                            <div class="key key-enter" data-key="ENTER" onclick="pressVirtualKey('Enter')">↵</div>
+
+                            <!-- Row 2 -->
+                            <div class="key" data-key="TAB" onclick="pressVirtualKey('Tab')">⇥</div>
+                            <div class="key" data-key="A" onclick="pressVirtualKey('A')">A</div>
+                            <div class="key" data-key="S" onclick="pressVirtualKey('S')">S</div>
+                            <div class="key" data-key="D" onclick="pressVirtualKey('D')">D</div>
+                            <div class="key" data-key="F" onclick="pressVirtualKey('F')">F</div>
+                            <div class="key" data-key="G" onclick="pressVirtualKey('G')">G</div>
+                            <div class="key" data-key="H" onclick="pressVirtualKey('H')">H</div>
+                            <div class="key" data-key="J" onclick="pressVirtualKey('J')">J</div>
+                            <div class="key" data-key="K" onclick="pressVirtualKey('K')">K</div>
+                            <div class="key" data-key="L" onclick="pressVirtualKey('L')">L</div>
+                            <div class="key key-space" data-key="SPACE" onclick="pressVirtualKey(' ')">Space</div>
+                        </div>
+
+                        <!-- Backlight LED color selector -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small text-white-50">Backlight LED Color:</span>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm rounded-circle p-2" style="background: #0ea5e9; width: 22px; height: 22px; border: 1px solid rgba(255,255,255,0.4);" onclick="changeKeyRGB('#0ea5e9')" title="Cyan Glow"></button>
+                                <button class="btn btn-sm rounded-circle p-2" style="background: #d946ef; width: 22px; height: 22px; border: 1px solid rgba(255,255,255,0.4);" onclick="changeKeyRGB('#d946ef')" title="Pink Glow"></button>
+                                <button class="btn btn-sm rounded-circle p-2" style="background: #10b981; width: 22px; height: 22px; border: 1px solid rgba(255,255,255,0.4);" onclick="changeKeyRGB('#10b981')" title="Green Glow"></button>
+                                <button class="btn btn-sm rounded-circle p-2" style="background: #f59e0b; width: 22px; height: 22px; border: 1px solid rgba(255,255,255,0.4);" onclick="changeKeyRGB('#f59e0b')" title="Orange Glow"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="container mb-5">
+    <div class="text-center mb-4">
+        <h2 class="h1 text-dark">Browse Categories</h2>
+        <p class="text-muted">Find exactly what you need to optimize your workflow</p>
+    </div>
+    <div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center">
+        {% for category in categories %}
+        <div class="col">
+            <a href="{% url 'products:product_list_by_category' category.slug %}" class="text-decoration-none">
+                <div class="card h-100 text-center border-0 shadow-sm rounded-4 overflow-hidden position-relative hover-lift" style="transition: transform 0.2s;">
+                    <div class="p-4 bg-white">
+                        <div class="bg-light rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="fa-solid {% if 'keyboard' in category.name.lower %}fa-keyboard{% elif 'monitor' in category.name.lower %}fa-desktop{% elif 'mouse' in category.name.lower %}fa-mouse-pointer{% elif 'chair' in category.name.lower %}fa-chair{% elif 'audio' in category.name.lower %}fa-headphones{% else %}fa-box-open{% endif %} fa-2x text-indigo text-primary"></i>
+                        </div>
+                        <h5 class="card-title text-dark mb-0 fw-bold">{{ category.name }}</h5>
+                        <p class="small text-muted mb-0 mt-1">{{ category.products.count }} Products</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted">
+            <p>No categories available. Please seed the database.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section id="featured" class="container mb-5 py-3">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="h1 text-dark mb-0">Featured Collections</h2>
+            <p class="text-muted mb-0">Explore our newly listed workspace gears</p>
+        </div>
+        <a href="{% url 'products:shop' %}" class="btn btn-outline-primary d-none d-sm-inline-block">View All Products <i class="fa-solid fa-arrow-right ms-1"></i></a>
+    </div>
+    
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+        {% for product in products %}
+        <div class="col">
+            <div class="product-card">
+                <!-- Wishlist Toggle -->
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'products:toggle_wishlist' product.id %}" class="wishlist-badge shadow-sm" title="Toggle Wishlist">
+                    <i class="fa-solid fa-heart"></i>
+                </a>
+                {% endif %}
+
+                <!-- Product Image Wrapper -->
+                <div class="product-image-wrapper">
+                    <!-- Rating Glass Badge -->
+                    <span class="position-absolute top-0 start-0 m-3 badge badge-glass">
+                        <i class="fa-solid fa-star text-warning me-1"></i>{{ product.average_rating }}
+                    </span>
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="product-card-img" alt="{{ product.name }}">
+                    {% else %}
+                    <!-- Elegant Custom CSS Gradient Placeholder -->
+                    <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white p-3" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);">
+                        <i class="fa-solid fa-laptop-code fa-3x mb-2 opacity-75"></i>
+                        <span class="fw-bold text-center small opacity-90">{{ product.name }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Stock status badge -->
+                    {% if product.stock == 0 %}
+                    <span class="position-absolute bottom-0 start-0 m-3 badge bg-danger py-2 px-3 text-uppercase">Out of Stock</span>
+                    {% elif product.stock < 5 %}
+                    <span class="position-absolute bottom-0 start-0 m-3 badge bg-warning text-dark py-2 px-3 text-uppercase">Only {{ product.stock }} Left</span>
+                    {% endif %}
+                </div>
+
+                <!-- Product Body -->
+                <div class="card-body p-4 d-flex flex-column" style="min-height: 200px;">
+                    <div class="text-muted small mb-1">{{ product.category.name }}</div>
+                    <h5 class="card-title fw-bold text-dark text-truncate mb-2" title="{{ product.name }}">
+                        <a href="{% url 'products:product_detail' id=product.id slug=product.slug %}" class="text-decoration-none text-dark">{{ product.name }}</a>
+                    </h5>
+                    
+                    <!-- Reviews & Stars -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="star-rating me-2">
+                            <i class="fa-solid fa-star"></i>
+                            <span class="small text-dark fw-bold">{{ product.average_rating }}</span>
+                        </div>
+                        <span class="small text-muted">({{ product.rating_count }} reviews)</span>
+                    </div>
+
+                    <!-- Price and Button alignment -->
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div class="h4 text-primary fw-extrabold mb-0">₹{{ product.price }}</div>
+                        <a href="{% url 'products:product_detail' id=product.id slug=product.slug %}" class="btn btn-outline-primary btn-sm px-3 rounded-pill">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center my-5">
+            <i class="fa-solid fa-box-open fa-3x text-muted mb-3"></i>
+            <h3>No products found</h3>
+            <p class="text-muted">Please add products through the admin panel or run the seed command.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-5 d-sm-none">
+        <a href="{% url 'products:shop' %}" class="btn btn-outline-primary w-100 py-3">View All Products <i class="fa-solid fa-arrow-right ms-1"></i></a>
+    </div>
+</section>
+
+<style>
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.1) !important;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Tab switching logic
+    function switchLabTab(tabName) {
+        const dealsBtn = document.getElementById('tabDealsBtn');
+        const soundLabBtn = document.getElementById('tabSoundLabBtn');
+        const dealsContent = document.getElementById('labContentDeals');
+        const soundLabContent = document.getElementById('labContentSoundLab');
+        
+        if (tabName === 'deals') {
+            dealsBtn.classList.add('active');
+            soundLabBtn.classList.remove('active');
+            dealsContent.classList.remove('d-none');
+            soundLabContent.classList.add('d-none');
+        } else {
+            soundLabBtn.classList.add('active');
+            dealsBtn.classList.remove('active');
+            soundLabContent.classList.remove('d-none');
+            dealsContent.classList.add('d-none');
+            // Resume audio context on user interaction
+            initAudio();
+        }
+    }
+
+    // Web Audio Synthesizer logic
+    let audioCtx = null;
+    let rgbColor = '#0ea5e9';
+    let switchType = 'blue';
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    // Select switch action
+    function selectSwitch(type) {
+        switchType = type;
+        const options = document.querySelectorAll('#switchSelector .switch-option');
+        options.forEach(opt => {
+            opt.classList.remove('active');
+            if (opt.getAttribute('data-switch') === type) {
+                opt.classList.add('active');
+            }
+        });
+        
+        // Auto-change lighting color to match switch default
+        if (type === 'blue') rgbColor = '#0ea5e9';
+        else if (type === 'brown') rgbColor = '#a855f7';
+        else if (type === 'red') rgbColor = '#ef4444';
+        
+        updateKeyGlowStyles();
+        playClickSound(type);
+    }
+
+    // Change Key RGB color
+    function changeKeyRGB(color) {
+        rgbColor = color;
+        updateKeyGlowStyles();
+        playClickSound(switchType);
+    }
+
+    function updateKeyGlowStyles() {
+        const keys = document.querySelectorAll('.keyboard-grid .key');
+        keys.forEach(k => {
+            k.style.setProperty('--accent-glow', rgbColor);
+        });
+    }
+
+    // Sound generation via Web Audio API
+    function playClickSound(type) {
+        initAudio();
+        if (!audioCtx) return;
+        
+        const now = audioCtx.currentTime;
+        
+        // Output synth node config
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+        
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        if (type === 'blue') { // Clicky switch
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(550, now);
+            osc.frequency.exponentialRampToValueAtTime(120, now + 0.07);
+            
+            // High frequency click burst (noise generator)
+            const bufferSize = audioCtx.sampleRate * 0.015;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const noiseFilter = audioCtx.createBiquadFilter();
+            noiseFilter.type = 'highpass';
+            noiseFilter.frequency.setValueAtTime(3500, now);
+            
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0.25, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.01);
+            
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+            noise.start(now);
+            
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.07);
+            osc.start(now);
+            osc.stop(now + 0.07);
+            
+        } else if (type === 'brown') { // Tactile switch
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(320, now);
+            osc.frequency.exponentialRampToValueAtTime(70, now + 0.09);
+            
+            // Short mechanical noise bump
+            const bufferSize = audioCtx.sampleRate * 0.025;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const noiseFilter = audioCtx.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.setValueAtTime(750, now);
+            
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0.12, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.02);
+            
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+            noise.start(now);
+            
+            gain.gain.setValueAtTime(0.18, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.09);
+            osc.start(now);
+            osc.stop(now + 0.09);
+            
+        } else { // Red switch (Linear)
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(200, now);
+            osc.frequency.exponentialRampToValueAtTime(55, now + 0.1);
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(300, now);
+            
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now);
+            osc.stop(now + 0.1);
+        }
+    }
+
+    // Press virtual key action
+    function pressVirtualKey(keyName) {
+        let cleanName = keyName.toUpperCase();
+        if (cleanName === ' ') cleanName = 'SPACE';
+        
+        const keyEl = document.querySelector(`.keyboard-grid .key[data-key="${cleanName}"]`);
+        if (keyEl) {
+            keyEl.style.setProperty('--accent-glow', rgbColor);
+            keyEl.classList.add('active');
+            playClickSound(switchType);
+            
+            setTimeout(() => {
+                keyEl.classList.remove('active');
+            }, 100);
+        }
+    }
+
+    // Intercept physical keyboard entries
+    document.addEventListener('keydown', function(e) {
+        if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+            return;
+        }
+        
+        let keyChar = e.key;
+        if (keyChar === 'Escape') keyChar = 'Esc';
+        if (keyChar === ' ') keyChar = 'Space';
+        
+        let targetKey = keyChar.toUpperCase();
+        
+        const keyEl = document.querySelector(`.keyboard-grid .key[data-key="${targetKey}"]`);
+        if (keyEl) {
+            const soundLabBtn = document.getElementById('tabSoundLabBtn');
+            if (soundLabBtn && !soundLabBtn.classList.contains('active')) {
+                switchLabTab('sound-lab');
+            }
+            
+            e.preventDefault();
+            pressVirtualKey(keyChar);
+        }
+    });
+
+    // Run styling defaults
+    updateKeyGlowStyles();
+</script>
+{% endblock %}

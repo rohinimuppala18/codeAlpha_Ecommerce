@@ -1,0 +1,461 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AlphaCart | Elite Developer Keyboards & Workspace Setup Essentials{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom Style Sheet -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    
+    <script>
+        // Immediately set theme before render to avoid flashing
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+</head>
+<body>
+    <!-- Blurred Background Mesh Blobs -->
+    <div class="bg-blob blob-blue"></div>
+    <div class="bg-blob blob-cyan"></div>
+    <div class="bg-blob blob-purple"></div>
+    
+    <!-- Page Loading Indicator -->
+    <div id="loader" class="spinner-wrapper">
+        <div class="spinner-border text-info" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'products:home' %}">
+                <i class="fa-solid fa-laptop-code me-2"></i>AlphaCart
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-link">
+                        <a class="nav-link {% if request.resolver_match.view_name == 'products:home' %}active{% endif %}" href="{% url 'products:home' %}">Home</a>
+                    </li>
+                    <li class="nav-link">
+                        <a class="nav-link {% if request.resolver_match.view_name == 'products:shop' %}active{% endif %}" href="{% url 'products:shop' %}">Shop</a>
+                    </li>
+                </ul>
+                
+                <!-- Search bar in navigation with live suggestions -->
+                <form class="d-flex me-lg-3 my-2 my-lg-0 position-relative" action="{% url 'products:shop' %}" method="get" id="navSearchForm" autocomplete="off">
+                    <div class="input-group">
+                        <input class="form-control border-secondary bg-dark text-white" type="search" id="navSearchInput" placeholder="Search products..." aria-label="Search" name="q" value="{{ query|default:'' }}">
+                        <button class="btn btn-outline-info" type="submit">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                    <!-- Suggestions Panel -->
+                    <div class="search-suggestions-panel position-absolute w-100 mt-5 rounded-3 shadow-lg border border-secondary d-none" id="suggestionsPanel" style="z-index: 1000; top: 0; left: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);">
+                        <ul class="list-group list-group-flush" id="suggestionsList"></ul>
+                    </div>
+                </form>
+
+                <div class="d-flex align-items-center mb-2 mb-lg-0">
+                    <!-- Theme Toggle Button -->
+                    <button id="themeToggleBtn" class="btn btn-link text-decoration-none me-3 p-1" title="Toggle Theme" style="transition: transform 0.3s ease; color: var(--text-dark);">
+                        <i class="fa-solid fa-moon fa-lg" id="themeToggleIcon"></i>
+                    </button>
+
+                    <!-- Wishlist -->
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'products:wishlist' %}" class="btn btn-link text-decoration-none me-3 position-relative p-1" title="Wishlist">
+                        <i class="fa-regular fa-heart fa-lg text-danger"></i>
+                    </a>
+                    {% endif %}
+
+                    <!-- Shopping Cart badge -->
+                    <a href="{% url 'cart:cart_detail' %}" class="btn btn-outline-info me-3 position-relative py-2 px-3 rounded-pill">
+                        <i class="fa-solid fa-cart-shopping me-1"></i> Cart
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
+                            {{ cart_total_items|default:"0" }}
+                        </span>
+                    </a>
+
+                    <!-- User Account actions -->
+                    {% if request.user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-accent dropdown-toggle px-3" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-user-circle me-1"></i> Hello, {{ request.user.username }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{% url 'accounts:dashboard' %}"><i class="fa-solid fa-gauge me-2 text-primary"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'orders:order_history' %}"><i class="fa-solid fa-box me-2 text-success"></i>My Orders</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"><i class="fa-solid fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-theme me-2"><i class="fa-solid fa-sign-in-alt me-1"></i> Login</a>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary"><i class="fa-solid fa-user-plus me-1"></i> Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Message Alerts Tray (Toast style notifications) -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+            <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check text-success{% elif message.tags == 'warning' %}fa-circle-exclamation text-warning{% elif message.tags == 'danger' %}fa-circle-xmark text-danger{% else %}fa-circle-info text-info{% endif %} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Page Content Block -->
+    <main class="flex-shrink-0">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer py-5 mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="text-white mb-3"><i class="fa-solid fa-laptop-code me-2 text-info"></i>AlphaCart</h5>
+                    <p class="small">AlphaCart is an elite online retailer supplying premium mechanical keyboards, curved monitors, vertical displays, and workspace ergonomics designed to maximize coding productivity, speed, and comfort.</p>
+                    <p class="small text-muted mb-0">&copy; 2026 AlphaCart. All rights reserved.</p>
+                </div>
+                <div class="col-md-4 col-lg-2 offset-lg-2 mb-4 mb-md-0">
+                    <h6 class="text-white text-uppercase mb-3">Quick Links</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><a href="{% url 'products:home' %}">Home</a></li>
+                        <li class="mb-2"><a href="{% url 'products:shop' %}">Shop Catalog</a></li>
+                        <li class="mb-2"><a href="{% url 'cart:cart_detail' %}">View Cart</a></li>
+                        {% if request.user.is_authenticated %}
+                        <li class="mb-2"><a href="{% url 'accounts:dashboard' %}">User Dashboard</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-md-4 col-lg-2 mb-4 mb-md-0">
+                    <h6 class="text-white text-uppercase mb-3">Security</h6>
+                    <p class="small text-muted">Protected routes, secure password hashes, strict CSRF validation, and parameterized SQL queries for absolute database integrity.</p>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <h6 class="text-white text-uppercase mb-3">Technology</h6>
+                    <ul class="list-unstyled mb-0 text-muted small">
+                        <li class="mb-2">Django (Python)</li>
+                        <li class="mb-2">SQLite Database</li>
+                        <li class="mb-2">Bootstrap 5</li>
+                        <li class="mb-2">Vanilla JS / CSS3</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Page Loading, Autocomplete Search, Alerts, and AJAX Cart Scripts -->
+    <script>
+        // Dismiss notifications automatically after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.messages-container .alert');
+                alerts.forEach(function(alert) {
+                    var bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+
+        // Show page loader on navigation/form submissions
+        window.addEventListener('beforeunload', function() {
+            document.getElementById('loader').classList.add('show');
+        });
+        
+        // Hide loader when page renders
+        window.addEventListener('load', function() {
+            document.getElementById('loader').classList.remove('show');
+        });
+
+        // --- Live Search Autocomplete Logic ---
+        const searchInput = document.getElementById('navSearchInput');
+        const suggestionsPanel = document.getElementById('suggestionsPanel');
+        const suggestionsList = document.getElementById('suggestionsList');
+        
+        let debounceTimer;
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                const query = this.value.trim();
+                
+                if (query.length < 2) {
+                    suggestionsPanel.classList.add('d-none');
+                    return;
+                }
+                
+                debounceTimer = setTimeout(() => {
+                    fetch(`/search-suggestions/?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            suggestionsList.innerHTML = '';
+                            if (data.suggestions && data.suggestions.length > 0) {
+                                data.suggestions.forEach(item => {
+                                    const li = document.createElement('li');
+                                    li.className = 'list-group-item bg-transparent text-white border-0 py-2 border-bottom border-secondary d-flex align-items-center hover-suggest';
+                                    li.style.cursor = 'pointer';
+                                    
+                                    const imgHtml = item.image_url 
+                                        ? `<img src="${item.image_url}" class="rounded-1 me-2 object-fit-cover" style="width: 35px; height: 35px;">`
+                                        : `<div class="rounded-1 me-2 bg-secondary text-center d-flex align-items-center justify-content-center text-white" style="width: 35px; height: 35px; font-size: 0.6rem; font-weight: bold;">CODE</div>`;
+                                        
+                                    li.innerHTML = `
+                                        <div class="d-flex align-items-center w-100 justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                ${imgHtml}
+                                                <div>
+                                                    <div class="fw-bold small text-white text-truncate" style="max-width: 170px;">${item.name}</div>
+                                                    <div class="text-muted" style="font-size: 0.75rem;">${item.category}</div>
+                                                </div>
+                                            </div>
+                                            <div class="fw-bold text-info small">₹${item.price}</div>
+                                        </div>
+                                    `;
+                                    li.addEventListener('click', () => {
+                                        window.location.href = item.url;
+                                    });
+                                    suggestionsList.appendChild(li);
+                                });
+                                suggestionsPanel.classList.remove('d-none');
+                            } else {
+                                suggestionsPanel.classList.add('d-none');
+                            }
+                        });
+                }, 250);
+            });
+
+            // Hide suggestions panel when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !suggestionsPanel.contains(e.target)) {
+                    suggestionsPanel.classList.add('d-none');
+                }
+            });
+        }
+
+        // --- Global AJAX Add-to-Cart Form Interception ---
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (form.action && form.action.includes('/cart/add/')) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const actionUrl = form.action;
+                
+                fetch(actionUrl, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update cart badge count in nav
+                        const badge = document.querySelector('.navbar .badge');
+                        if (badge) {
+                            badge.textContent = data.total_items;
+                            // Add scaling bounce animation
+                            badge.classList.remove('animate-bounce');
+                            void badge.offsetWidth; // Trigger reflow to restart animation
+                            badge.classList.add('animate-bounce');
+                        }
+                        // Show success alert toast
+                        showToast('success', data.message);
+                    } else {
+                        // Show warning alert toast
+                        showToast('warning', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding to cart:', error);
+                    showToast('danger', 'Unable to add item. Please try again.');
+                });
+            }
+        });
+
+        // Dynamic Custom Toast Notification Renderer
+        function showToast(tag, text) {
+            const container = document.querySelector('.messages-container') || createMessagesContainer();
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${tag} alert-dismissible fade show`;
+            alertDiv.role = 'alert';
+            
+            let iconClass = 'fa-circle-info text-info';
+            if (tag === 'success') iconClass = 'fa-circle-check text-success';
+            else if (tag === 'warning') iconClass = 'fa-circle-exclamation text-warning';
+            else if (tag === 'danger') iconClass = 'fa-circle-xmark text-danger';
+
+            alertDiv.innerHTML = `
+                <i class="fa-solid ${iconClass} me-2"></i>
+                ${text}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            container.appendChild(alertDiv);
+            
+            // Auto close toast after 4 seconds
+            setTimeout(() => {
+                var bsAlert = new bootstrap.Alert(alertDiv);
+                bsAlert.close();
+            }, 4000);
+        }
+        
+        function createMessagesContainer() {
+            const container = document.createElement('div');
+            container.className = 'messages-container';
+            document.body.appendChild(container);
+            return container;
+        }
+
+        // --- Theme Toggle Button Setup ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggleBtn = document.getElementById('themeToggleBtn');
+            const themeToggleIcon = document.getElementById('themeToggleIcon');
+            
+            function updateThemeUI(theme) {
+                if (theme === 'dark') {
+                    themeToggleIcon.classList.remove('fa-moon');
+                    themeToggleIcon.classList.add('fa-sun', 'text-warning');
+                } else {
+                    themeToggleIcon.classList.remove('fa-sun', 'text-warning');
+                    themeToggleIcon.classList.add('fa-moon');
+                }
+            }
+            
+            // Sync UI state with active theme
+            const activeTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            updateThemeUI(activeTheme);
+            
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', function() {
+                    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    
+                    // Trigger spin animation
+                    themeToggleBtn.style.transform = 'rotate(360deg)';
+                    setTimeout(() => {
+                        themeToggleBtn.style.transform = 'rotate(0deg)';
+                    }, 300);
+                    
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    updateThemeUI(newTheme);
+                });
+            }
+        });
+
+        // --- Global AJAX Wishlist Toggle Interceptor ---
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (link && link.href && link.href.includes('/wishlist/toggle/')) {
+                const isAuthenticated = {% if request.user.is_authenticated %}true{% else %}false{% endif %};
+                if (!isAuthenticated) {
+                    return; // Let default browser navigation redirect to login
+                }
+                
+                e.preventDefault();
+                
+                const url = new URL(link.href);
+                url.searchParams.set('ajax', 'true');
+                
+                fetch(url.toString(), {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.is_added ? 'success' : 'info', data.message);
+                        
+                        // Find all instances of this product toggle on page and sync their icons/classes
+                        const targetProductId = url.pathname.split('/').filter(Boolean).pop();
+                        const wishlistLinks = document.querySelectorAll(`a[href*="/wishlist/toggle/${targetProductId}"]`);
+                        
+                        wishlistLinks.forEach(itemLink => {
+                            const heartIcons = itemLink.querySelectorAll('i');
+                            if (data.is_added) {
+                                itemLink.classList.add('active');
+                                if (itemLink.classList.contains('btn-outline-danger')) {
+                                    itemLink.classList.remove('btn-outline-danger');
+                                    itemLink.classList.add('btn-danger');
+                                }
+                                heartIcons.forEach(icon => {
+                                    icon.classList.remove('fa-regular', 'fa-heart-crack');
+                                    icon.classList.add('fa-solid', 'fa-heart');
+                                });
+                            } else {
+                                itemLink.classList.remove('active');
+                                if (itemLink.classList.contains('btn-danger')) {
+                                    itemLink.classList.remove('btn-danger');
+                                    itemLink.classList.add('btn-outline-danger');
+                                }
+                                heartIcons.forEach(icon => {
+                                    icon.classList.remove('fa-solid', 'fa-heart');
+                                    icon.classList.add('fa-regular', 'fa-heart');
+                                });
+                            }
+                        });
+                        
+                        // Handle removal animations specifically on the wishlist page
+                        if (!data.is_added && window.location.pathname.includes('/wishlist/')) {
+                            const wishlistCol = link.closest('.col');
+                            if (wishlistCol) {
+                                wishlistCol.style.transition = 'all 0.4s ease';
+                                wishlistCol.style.opacity = '0';
+                                wishlistCol.style.transform = 'scale(0.8) translateY(20px)';
+                                setTimeout(() => {
+                                    wishlistCol.remove();
+                                    
+                                    const grid = document.querySelector('.row-cols-1, .row-cols-md-3');
+                                    if (grid && grid.querySelectorAll('.col').length === 0) {
+                                        grid.innerHTML = `
+                                            <div class="col-12 text-center my-5 py-5 bg-white rounded-4 shadow-sm border border-light">
+                                                <i class="fa-solid fa-heart-circle-xmark fa-4x text-muted mb-3"></i>
+                                                <h3>Your wishlist is empty</h3>
+                                                <p class="text-muted">Browse our catalog and save items you like!</p>
+                                                <a href="/shop/" class="btn btn-primary px-4 py-2 mt-2">Go to Shop</a>
+                                            </div>
+                                        `;
+                                    }
+                                }, 400);
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error toggling wishlist:', error);
+                    showToast('danger', 'Unable to toggle wishlist. Please try again.');
+                });
+            }
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

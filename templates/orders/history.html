@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order History | AlphaCart{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Breadcrumb & Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'products:home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'accounts:dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">My Orders</li>
+                </ol>
+            </nav>
+            <h1 class="text-dark fw-bold"><i class="fa-solid fa-clock-rotate-left me-2 text-info"></i>Order History</h1>
+            <p class="text-muted">Review details of all your previous orders and tracking statuses</p>
+        </div>
+    </div>
+
+    <!-- Orders Table List -->
+    <div class="row">
+        <div class="col-12">
+            {% if orders %}
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" class="ps-4">Order ID</th>
+                                    <th scope="col">Date Purchased</th>
+                                    <th scope="col">Items Count</th>
+                                    <th scope="col">Grand Total</th>
+                                    <th scope="col">Shipping Status</th>
+                                    <th scope="col">Payment Status</th>
+                                    <th scope="col" class="text-end pe-4">Invoice / View</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td class="ps-4 fw-bold">#{{ order.id }}</td>
+                                    <td>{{ order.created_at|date:"F d, Y, h:i A" }}</td>
+                                    <td>
+                                        <span class="badge bg-secondary-subtle text-secondary py-2 px-2.5">
+                                            {{ order.items.count }} unique items
+                                        </span>
+                                    </td>
+                                    <td class="fw-bold text-primary">₹{{ order.total_price }}</td>
+                                    <td>
+                                        <span class="badge {% if order.status == 'Pending' %}bg-warning text-dark{% elif order.status == 'Processing' %}bg-info{% elif order.status == 'Shipped' %}bg-primary{% elif order.status == 'Delivered' %}bg-success{% else %}bg-danger{% endif %} px-3 py-2">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if order.is_paid %}
+                                        <span class="badge bg-success-subtle text-success border border-success px-3 py-2">Paid</span>
+                                        {% else %}
+                                        <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-2">Unpaid</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="{% url 'orders:order_success' order.id %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                            <i class="fa-solid fa-file-invoice me-1"></i>View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!-- Empty history state -->
+            <div class="text-center py-5 bg-white rounded-4 shadow-sm border border-light">
+                <i class="fa-solid fa-box-open fa-5x text-muted mb-3"></i>
+                <h3>No order history available</h3>
+                <p class="text-muted">You haven't placed any orders on AlphaCart yet.</p>
+                <a href="{% url 'products:shop' %}" class="btn btn-primary px-5 py-3 rounded-pill mt-3">
+                    Start Shopping
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

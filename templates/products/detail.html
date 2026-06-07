@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} | AlphaCart{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'products:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'products:shop' %}">Shop</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'products:product_list_by_category' product.category.slug %}">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <!-- Product Intro Section -->
+    <div class="row g-5 mb-5">
+        <!-- Left: Product Image -->
+        <div class="col-md-6">
+            <div class="glass-panel p-3 border border-light shadow-sm rounded-4 text-center overflow-hidden position-relative" style="background-color: #ffffff;">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded-4 w-100 object-fit-cover" alt="{{ product.name }}" style="max-height: 450px;">
+                {% else %}
+                <div class="d-flex flex-column align-items-center justify-content-center text-white rounded-4 w-100" style="background: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%); min-height: 400px;">
+                    <i class="fa-solid fa-laptop-code fa-5x mb-3 opacity-75"></i>
+                    <h2 class="fw-bold px-4 text-center">{{ product.name }}</h2>
+                    <p class="opacity-75">Visual Assets Not Uploaded</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right: Product Info & Actions -->
+        <div class="col-md-6 d-flex flex-column justify-content-between">
+            <div>
+                <span class="badge bg-secondary mb-2 px-3 py-2 text-uppercase">{{ product.category.name }}</span>
+                <h1 class="display-5 text-dark fw-extrabold mb-2">{{ product.name }}</h1>
+                
+                <!-- Ratings Summary -->
+                <div class="d-flex align-items-center mb-4">
+                    <div class="star-rating me-2 fs-5">
+                        <i class="fa-solid fa-star"></i>
+                        <span class="text-dark fw-bold ms-1">{{ product.average_rating }}</span>
+                    </div>
+                    <span class="text-muted">| {{ product.rating_count }} Customer Reviews</span>
+                </div>
+
+                <!-- Price -->
+                <div class="h2 text-primary fw-extrabold mb-4">₹{{ product.price }}</div>
+
+                <hr class="my-4 border-light">
+
+                <!-- Description -->
+                <h5 class="fw-bold text-dark mb-2">About this item</h5>
+                <p class="text-muted fs-5 lh-base">{{ product.description|linebreaksbr }}</p>
+
+                <!-- Stock check and warning -->
+                <div class="my-4">
+                    {% if product.stock > 0 %}
+                        <span class="badge bg-success-subtle text-success border border-success px-3 py-2 text-uppercase fs-6">
+                            <i class="fa-solid fa-circle-check me-1"></i> In Stock ({{ product.stock }} available)
+                        </span>
+                    {% else %}
+                        <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-2 text-uppercase fs-6">
+                            <i class="fa-solid fa-circle-xmark me-1"></i> Out of Stock
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Add to Cart and Wishlist form -->
+            <div class="mt-4 bg-white p-4 rounded-4 shadow-sm border border-light">
+                <form action="{% url 'cart:cart_add' product.id %}" method="post" class="d-flex flex-column gap-3">
+                    {% csrf_token %}
+                    <div class="d-flex align-items-center gap-3">
+                        <label for="quantity" class="fw-bold text-dark mb-0">Quantity:</label>
+                        <select name="quantity" id="quantity" class="form-select border-secondary text-center" style="width: 90px;" {% if product.stock == 0 %}disabled{% endif %}>
+                            {% for i in "x"|rjust:product.stock %}
+                            <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                            {% empty %}
+                            <option value="0">0</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="d-grid d-sm-flex gap-3">
+                        <button type="submit" class="btn btn-primary btn-lg flex-grow-1 py-3" {% if product.stock == 0 %}disabled{% endif %}>
+                            <i class="fa-solid fa-cart-plus me-2"></i> Add to Cart
+                        </button>
+                        
+                        {% if request.user.is_authenticated %}
+                        <a href="{% url 'products:toggle_wishlist' product.id %}?next={{ request.path }}" class="btn {% if in_wishlist %}btn-danger{% else %}btn-outline-danger{% endif %} btn-lg px-4 py-3" title="Toggle Wishlist">
+                            <i class="{% if in_wishlist %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-outline-danger btn-lg px-4 py-3" title="Login to Wishlist">
+                            <i class="fa-regular fa-heart"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations Section -->
+    {% if recommendations %}
+    <div class="my-5 pt-3">
+        <h3 class="fw-bold text-dark mb-4">You may also like</h3>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+            {% for item in recommendations %}
+            <div class="col">
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        {% if item.image %}
+                        <img src="{{ item.image.url }}" class="product-card-img" alt="{{ item.name }}">
+                        {% else %}
+                        <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white p-2" style="background: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);">
+                            <span class="fw-bold text-center small text-truncate px-2">{{ item.name }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body p-3">
+                        <h6 class="card-title fw-bold text-truncate mb-1">
+                            <a href="{% url 'products:product_detail' id=item.id slug=item.slug %}" class="text-decoration-none text-dark">{{ item.name }}</a>
+                        </h6>
+                        <div class="text-primary fw-bold">₹{{ item.price }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Reviews Section -->
+    <div class="row g-5 my-5 pt-3">
+        <!-- List Reviews -->
+        <div class="col-lg-7">
+            <h3 class="fw-bold text-dark mb-4"><i class="fa-solid fa-comments me-2 text-primary"></i>Customer Feedback</h3>
+            
+            {% for review in reviews %}
+            <div class="card mb-3 border-light rounded-3 shadow-sm bg-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold mb-0 text-dark">{{ review.user.username }}</h6>
+                        <span class="text-muted small">{{ review.created_at|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="star-rating mb-2">
+                        {% for i in "12345" %}
+                        <i class="{% if review.rating >= forloop.counter %}fa-solid{% else %}fa-regular{% endif %} fa-star"></i>
+                        {% endfor %}
+                    </div>
+                    <p class="text-muted mb-0">{{ review.comment }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="bg-white rounded-3 p-5 text-center border border-light">
+                <i class="fa-solid fa-message-slash fa-3x text-muted mb-3"></i>
+                <h5>No reviews yet</h5>
+                <p class="text-muted mb-0">Be the first to share your thoughts about this product!</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Add Review Form -->
+        <div class="col-lg-5">
+            <div class="glass-panel p-4 border border-light shadow-sm">
+                <h4 class="fw-bold text-dark mb-3">Write a Review</h4>
+                
+                {% if request.user.is_authenticated %}
+                <form action="{% url 'products:product_detail' id=product.id slug=product.slug %}" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_rating" class="form-label fw-bold text-dark">Rating</label>
+                        <select name="rating" id="id_rating" class="form-select border-secondary">
+                            <option value="5" selected>5 Stars - Excellent</option>
+                            <option value="4">4 Stars - Good</option>
+                            <option value="3">3 Stars - Average</option>
+                            <option value="2">2 Stars - Poor</option>
+                            <option value="1">1 Star - Terrible</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_comment" class="form-label fw-bold text-dark">Review Comment</label>
+                        <textarea name="comment" id="id_comment" rows="4" class="form-control border-secondary" placeholder="What did you like or dislike? How's the quality?" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-accent w-100 py-2">Submit Review</button>
+                </form>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fa-solid fa-lock fa-2x text-muted mb-2"></i>
+                    <p class="text-muted">You must be logged in to leave reviews.</p>
+                    <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary btn-sm px-4">Log In</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
