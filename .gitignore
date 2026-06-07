@@ -14,7 +14,6 @@ db.sqlite3
 db.sqlite3-journal
 
 # Media / Uploaded files
-media/
 staticfiles/
 
 # Vercel and local configurations
